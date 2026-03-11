@@ -1,0 +1,655 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blog - Articles & Tutoriels{% endblock %}
+
+{% block extra_css %}
+<style>
+    .blog-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 60px 0 80px;
+        margin-top: -24px;
+        margin-bottom: 40px;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .blog-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-repeat: no-repeat;
+        background-position: bottom;
+        background-size: cover;
+        opacity: 0.3;
+    }
+    
+    .blog-header h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .blog-header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .search-section {
+        margin-top: -40px;
+        margin-bottom: 40px;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .search-card {
+        background: white;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 5px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .search-form {
+        display: flex;
+        align-items: center;
+    }
+    
+    .search-icon {
+        color: #667eea;
+        margin-left: 20px;
+        font-size: 1.2rem;
+    }
+    
+    .search-input {
+        border: none;
+        padding: 15px 20px;
+        width: 100%;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        outline: none;
+        background: transparent;
+    }
+    
+    .search-input:focus {
+        box-shadow: 0 0 0 2px #667eea;
+        border-radius: 50px;
+    }
+    
+    .search-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-right: 5px;
+    }
+    
+    .search-button:hover {
+        transform: translateX(3px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .search-info {
+        text-align: center;
+        margin: 20px 0;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .search-info i {
+        color: #667eea;
+        margin-right: 8px;
+    }
+    
+    .search-info a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .search-info a:hover {
+        text-decoration: underline;
+        transform: translateX(3px);
+    }
+    
+    .view-all-btn {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 10px 25px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        margin-left: 15px;
+    }
+    
+    .view-all-btn:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+    
+    .view-all-btn i {
+        margin-right: 8px;
+    }
+    
+    .article-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        background: white;
+        margin-bottom: 30px;
+        position: relative;
+    }
+    
+    .article-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+    }
+    
+    .article-image {
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+        width: 100%;
+    }
+    
+    .article-card:hover .article-image {
+        transform: scale(1.05);
+    }
+    
+    .article-image-placeholder {
+        height: 250px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .article-meta {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        color: #666;
+        font-size: 0.9rem;
+        flex-wrap: wrap;
+    }
+    
+    .article-meta i {
+        color: #667eea;
+        margin-right: 5px;
+    }
+    
+    .article-meta span {
+        margin-right: 15px;
+        margin-bottom: 5px;
+    }
+    
+    .article-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        line-height: 1.4;
+    }
+    
+    .article-title a {
+        color: #333;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .article-title a:hover {
+        color: #667eea;
+    }
+    
+    .article-excerpt {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+    
+    .read-more-btn {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 10px 25px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .read-more-btn:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+    
+    .read-more-btn i {
+        margin-left: 8px;
+        transition: transform 0.3s ease;
+    }
+    
+    .read-more-btn:hover i {
+        transform: translateX(3px);
+    }
+    
+    .pagination-container {
+        margin: 50px 0;
+        text-align: center;
+    }
+    
+    .pagination {
+        display: inline-flex;
+        gap: 10px;
+        list-style: none;
+        padding: 0;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .page-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: white;
+        color: #333;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .page-link:hover,
+    .page-link.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .page-link.prev-next {
+        width: auto;
+        padding: 0 20px;
+        border-radius: 25px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        background: #f8f9fa;
+        border-radius: 20px;
+        margin: 40px 0;
+    }
+    
+    .empty-state i {
+        font-size: 5rem;
+        color: #667eea;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+    
+    .empty-state h3 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+    
+    .empty-state p {
+        color: #666;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .highlight {
+        background-color: #fff3cd;
+        padding: 2px 0;
+        font-weight: 500;
+    }
+    
+    .auteur-badge {
+        display: inline-flex;
+        align-items: center;
+        background: #e8f0fe;
+        color: #667eea;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        margin-top: 10px;
+    }
+    
+    .auteur-badge i {
+        margin-right: 5px;
+        color: #667eea;
+    }
+    
+    .clear-search {
+        display: inline-flex;
+        align-items: center;
+        background: #f0f0f0;
+        color: #666;
+        padding: 8px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .clear-search:hover {
+        background: #e0e0e0;
+        color: #333;
+        transform: translateX(3px);
+    }
+    
+    @media (max-width: 768px) {
+        .blog-header h1 {
+            font-size: 2rem;
+        }
+        
+        .blog-header p {
+            font-size: 1rem;
+        }
+        
+        .search-card {
+            margin: 0 15px;
+        }
+        
+        .search-form {
+            flex-direction: column;
+            padding: 10px;
+        }
+        
+        .search-icon {
+            display: none;
+        }
+        
+        .search-input {
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .search-button {
+            width: 100%;
+            margin-right: 0;
+        }
+        
+        .article-title {
+            font-size: 1.2rem;
+        }
+        
+        .search-info {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .view-all-btn {
+            margin-left: 0;
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- En-tête du blog -->
+<div class="blog-header">
+    <div class="container">
+        <h1>
+            <i class="fas fa-blog me-3"></i>Blog & Tutoriels
+        </h1>
+        <p>Découvrez les articles de {{ articles.0.auteur|default:"Landry" }} sur l'administration réseau et les technologies IT</p>
+    </div>
+</div>
+
+<!-- Barre de recherche améliorée -->
+<div class="search-section">
+    <div class="container">
+        <div class="search-card">
+            <form method="GET" action="" class="search-form">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" 
+                       name="q" 
+                       class="search-input" 
+                       placeholder="Rechercher un article (titre, contenu, auteur...)"
+                       value="{{ request.GET.q }}"
+                       aria-label="Rechercher">
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search me-2"></i>Rechercher
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Affichage des résultats de recherche avec bouton Voir tous les articles -->
+{% if request.GET.q %}
+    <div class="container">
+        <div class="search-info">
+            <span>
+                <i class="fas fa-info-circle"></i>
+                <strong>{{ page_obj.paginator.count }}</strong> résultat{{ page_obj.paginator.count|pluralize }} trouvé{{ page_obj.paginator.count|pluralize }} pour "{{ request.GET.q }}"
+            </span>
+            
+            <!-- Bouton pour voir tous les articles -->
+            <a href="{% url 'article_list' %}" class="view-all-btn">
+                <i class="fas fa-arrow-left me-2"></i>Voir tous les articles
+            </a>
+            
+            <!-- Lien pour effacer la recherche (optionnel) -->
+            <a href="{% url 'article_list' %}" class="clear-search">
+                <i class="fas fa-times me-1"></i>Effacer
+            </a>
+        </div>
+    </div>
+{% endif %}
+
+<!-- Liste des articles -->
+<div class="container">
+    {% if page_obj %}
+        <div class="row">
+            {% for article in page_obj %}
+                <div class="col-lg-4 col-md-6">
+                    <article class="article-card">
+                        {% if article.image %}
+                            <img src="{{ article.image.url }}" 
+                                 class="article-image" 
+                                 alt="{{ article.titre }}"
+                                 loading="lazy">
+                        {% else %}
+                            <div class="article-image-placeholder">
+                                <div>
+                                    <i class="fas fa-newspaper fa-3x mb-2"></i>
+                                    <p class="mb-0">{{ article.titre|truncatechars:30 }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body p-4">
+                            <div class="article-meta">
+                                <span>
+                                    <i class="far fa-calendar-alt"></i>
+                                    {{ article.date_publication|date:"d F Y" }}
+                                </span>
+                                <span>
+                                    <i class="far fa-user"></i>
+                                    {{ article.auteur }}
+                                </span>
+                            </div>
+                            
+                            <h2 class="article-title">
+                                <a href="{% url 'article_detail' article.id %}">
+                                    {{ article.titre|truncatechars:60 }}
+                                </a>
+                            </h2>
+                            
+                            <p class="article-excerpt">
+                                {{ article.contenu|striptags|truncatechars:150 }}
+                            </p>
+                            
+                            {% if article.images.all %}
+                                <div class="mb-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-images me-1"></i>
+                                        {{ article.images.count }} image{{ article.images.count|pluralize }}
+                                    </small>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="d-flex align-items-center justify-content-between">
+                                <a href="{% url 'article_detail' article.id %}" class="read-more-btn">
+                                    Lire l'article
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                                
+                                <span class="auteur-badge">
+                                    <i class="fas fa-pen-fancy"></i>
+                                    {{ article.auteur|default:"Landry" }}
+                                </span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Message si aucun article -->
+        <div class="empty-state">
+            {% if request.GET.q %}
+                <i class="fas fa-search"></i>
+                <h3>Aucun résultat trouvé</h3>
+                <p>Désolé, aucun article ne correspond à votre recherche "{{ request.GET.q }}".</p>
+                <p class="text-muted">Essayez avec d'autres mots-clés ou consultez tous nos articles.</p>
+                <a href="{% url 'article_list' %}" class="btn btn-primary mt-3">
+                    <i class="fas fa-arrow-left me-2"></i>Voir tous les articles
+                </a>
+            {% else %}
+                <i class="fas fa-newspaper"></i>
+                <h3>Aucun article pour le moment</h3>
+                <p>Il n'y a pas encore d'articles publiés. Revenez bientôt !</p>
+            {% endif %}
+        </div>
+    {% endif %}
+    
+    <!-- Pagination -->
+    {% if page_obj.paginator.num_pages > 1 %}
+        <div class="pagination-container">
+            <nav aria-label="Pagination des articles">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li>
+                            <a class="page-link prev-next" 
+                               href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                <i class="fas fa-chevron-left me-2"></i>Précédent
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for i in page_obj.paginator.page_range %}
+                        {% if page_obj.number == i %}
+                            <li>
+                                <span class="page-link active">{{ i }}</span>
+                            </li>
+                        {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                            <li>
+                                <a class="page-link" 
+                                   href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                    {{ i }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li>
+                            <a class="page-link prev-next" 
+                               href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                Suivant<i class="fas fa-chevron-right ms-2"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            
+            <p class="text-muted mt-3">
+                Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }} 
+                ({{ page_obj.paginator.count }} article{{ page_obj.paginator.count|pluralize }})
+            </p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animation au scroll pour les cartes
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.article-card');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        cards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+        
+        // Focus sur le champ de recherche si paramètre q présent
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('q')) {
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput) {
+                searchInput.focus();
+            }
+        }
+    });
+</script>
+{% endblock %}

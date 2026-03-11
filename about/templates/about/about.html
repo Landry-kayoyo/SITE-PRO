@@ -1,0 +1,790 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}À propos - Landry{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 80px 0;
+        margin-top: -24px;
+        margin-bottom: 50px;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .about-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-repeat: no-repeat;
+        background-position: bottom;
+        background-size: cover;
+        opacity: 0.2;
+    }
+    
+    .about-header h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .about-header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .about-container {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 40px;
+        margin-bottom: 60px;
+        align-items: start;
+    }
+    
+    /* Profil - Colonne gauche */
+    .profile-card {
+        background: white;
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 100px;
+        transition: transform 0.3s ease;
+    }
+    
+    .profile-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(102, 126, 234, 0.2);
+    }
+    
+    .profile-image-container {
+        position: relative;
+        width: 100%;
+        height: 350px;
+        overflow: hidden;
+    }
+    
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .profile-card:hover .profile-image {
+        transform: scale(1.05);
+    }
+    
+    .profile-status {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        50% {
+            box-shadow: 0 4px 25px rgba(40, 167, 69, 0.6);
+        }
+        100% {
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+    }
+    
+    .profile-status i {
+        margin-right: 8px;
+        font-size: 0.8rem;
+    }
+    
+    .profile-info {
+        padding: 30px;
+        text-align: center;
+    }
+    
+    .profile-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .profile-title {
+        color: #667eea;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+        font-weight: 500;
+    }
+    
+    .profile-divider {
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 20px auto;
+    }
+    
+    .profile-detail {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        color: #666;
+    }
+    
+    .profile-detail i {
+        width: 30px;
+        color: #667eea;
+        font-size: 1.2rem;
+    }
+    
+    .profile-detail span {
+        font-size: 1rem;
+    }
+    
+    .profile-social {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 25px;
+    }
+    
+    .profile-social-link {
+        width: 45px;
+        height: 45px;
+        background: #f8f9fa;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #667eea;
+        font-size: 1.3rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .profile-social-link:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Contenu principal - Colonne droite */
+    .about-content {
+        background: white;
+        border-radius: 30px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    }
+    
+    .about-section {
+        margin-bottom: 40px;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 25px;
+        position: relative;
+        padding-bottom: 15px;
+    }
+    
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .section-title i {
+        color: #667eea;
+        margin-right: 15px;
+    }
+    
+    .bio-text {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #666;
+    }
+    
+    .bio-text p {
+        margin-bottom: 1.5rem;
+    }
+    
+    .bio-text strong {
+        color: #667eea;
+    }
+    
+    /* Compétences */
+    .skills-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    }
+    
+    .skill-category {
+        background: #f8f9fa;
+        border-radius: 20px;
+        padding: 25px;
+        transition: all 0.3s ease;
+    }
+    
+    .skill-category:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+    }
+    
+    .skill-category h4 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .skill-category h4 i {
+        color: #667eea;
+        margin-right: 10px;
+        font-size: 1.5rem;
+    }
+    
+    .skill-items {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .skill-item {
+        display: flex;
+        align-items: center;
+    }
+    
+    .skill-info {
+        flex: 1;
+    }
+    
+    .skill-name {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .skill-bar {
+        height: 8px;
+        background: #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    
+    .skill-progress {
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 4px;
+        width: 0;
+        transition: width 1s ease;
+    }
+    
+    /* Badges de compétences (alternative) */
+    .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .skill-tag {
+        background: white;
+        color: #667eea;
+        padding: 10px 25px;
+        border-radius: 30px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .skill-tag:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        border-color: transparent;
+    }
+    
+    /* Parcours */
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+    
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .timeline-item {
+        position: relative;
+        padding-bottom: 30px;
+    }
+    
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+    
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -38px;
+        top: 0;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: 3px solid white;
+        box-shadow: 0 0 0 2px #667eea;
+    }
+    
+    .timeline-date {
+        font-size: 0.9rem;
+        color: #667eea;
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: block;
+    }
+    
+    .timeline-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .timeline-subtitle {
+        color: #666;
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+    }
+    
+    .timeline-description {
+        color: #666;
+        line-height: 1.6;
+    }
+    
+    /* Centre d'intérêt */
+    .interests {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+    
+    .interest-item {
+        text-align: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .interest-item:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+    
+    .interest-item:hover i,
+    .interest-item:hover span {
+        color: white;
+    }
+    
+    .interest-item i {
+        font-size: 2.5rem;
+        color: #667eea;
+        margin-bottom: 10px;
+        transition: color 0.3s ease;
+    }
+    
+    .interest-item span {
+        display: block;
+        color: #333;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+    
+    /* Bouton contact */
+    .contact-cta {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 40px;
+        margin-top: 40px;
+        color: white;
+        text-align: center;
+    }
+    
+    .contact-cta h3 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+    }
+    
+    .contact-cta p {
+        opacity: 0.9;
+        margin-bottom: 25px;
+        font-size: 1.1rem;
+    }
+    
+    .contact-cta .btn-contact {
+        display: inline-flex;
+        align-items: center;
+        padding: 15px 40px;
+        background: white;
+        color: #667eea;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .contact-cta .btn-contact:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    
+    .contact-cta .btn-contact i {
+        margin-right: 10px;
+    }
+    
+    @media (max-width: 992px) {
+        .about-container {
+            grid-template-columns: 1fr;
+        }
+        
+        .profile-card {
+            position: static;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .about-header h1 {
+            font-size: 2rem;
+        }
+        
+        .about-header p {
+            font-size: 1rem;
+        }
+        
+        .profile-image-container {
+            height: 300px;
+        }
+        
+        .about-content {
+            padding: 25px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+        }
+        
+        .skills-container {
+            grid-template-columns: 1fr;
+        }
+        
+        .interests {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .contact-cta {
+            padding: 30px 20px;
+        }
+        
+        .contact-cta h3 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- En-tête de la page -->
+<div class="about-header">
+    <div class="container">
+        <h1>
+            <i class="fas fa-user-circle me-3"></i>À propos de moi
+        </h1>
+        <p>Découvrez mon parcours, mes compétences et ma passion pour l'IT</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="about-container">
+        <!-- Colonne gauche - Profil -->
+        <div class="profile-card">
+            <div class="profile-image-container">
+                <!-- CORRECTION ICI : Le dossier est "Apropos" (sans espace) -->
+                <img src="/media/Apropos/about.jpg" ...
+                     alt="Landry" 
+                     class="profile-image"
+                     onerror="this.onerror=null; this.src='https://via.placeholder.com/400x400?text=Landry'">
+                <div class="profile-status">
+                    <i class="fas fa-circle"></i>
+                    Disponible
+                </div>
+            </div>
+            
+            <div class="profile-info">
+                <h2 class="profile-name">Landry</h2>
+                <p class="profile-title">Étudiant en Administration Réseau</p>
+                
+                <div class="profile-divider"></div>
+                
+                <div class="profile-detail">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Lubumbashi, RDC</span>
+                </div>
+                
+                <div class="profile-detail">
+                    <i class="fas fa-university"></i>
+                    <span>Université Don Bosco</span>
+                </div>
+                
+                <div class="profile-detail">
+                    <i class="fas fa-envelope"></i>
+                    <span>landry@email.com</span>
+                </div>
+                
+                <div class="profile-detail">
+                    <i class="fas fa-language"></i>
+                    <span>Français, Anglais technique</span>
+                </div>
+                
+                <div class="profile-social">
+                    <a href="#" class="profile-social-link" target="_blank" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="profile-social-link" target="_blank" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" class="profile-social-link" target="_blank" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="profile-social-link" target="_blank" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Colonne droite - Contenu principal -->
+        <div class="about-content">
+            <!-- Bio -->
+            <div class="about-section">
+                <h3 class="section-title">
+                    <i class="fas fa-user"></i>
+                    Qui suis-je ?
+                </h3>
+                
+                <div class="bio-text">
+                    <p>
+                        Je suis <strong>Landry</strong>, étudiant en <strong>Administration Réseau</strong> à l'<strong>Université Don Bosco de Lubumbashi</strong>. 
+                        Passionné par les technologies de l'information, je me spécialise dans l'automatisation, 
+                        le DevOps et le développement web avec Django.
+                    </p>
+                    <p>
+                        Mon objectif est de concevoir des infrastructures réseau robustes et sécurisées, 
+                        tout en automatisant les tâches répétitives pour gagner en efficacité. Je suis 
+                        constamment en veille technologique pour rester à la pointe des innovations dans 
+                        mon domaine.
+                    </p>
+                    <p>
+                        En dehors de mes études, je développe des projets personnels et contribue à des 
+                        projets open-source pour enrichir mon expérience et partager mes connaissances 
+                        avec la communauté.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Compétences principales -->
+            <div class="about-section">
+                <h3 class="section-title">
+                    <i class="fas fa-cogs"></i>
+                    Compétences principales
+                </h3>
+                
+                <div class="skill-tags">
+                    <span class="skill-tag">
+                        <i class="fas fa-terminal me-2"></i>PowerShell
+                    </span>
+                    <span class="skill-tag">
+                        <i class="fas fa-rocket me-2"></i>DevOps
+                    </span>
+                    <span class="skill-tag">
+                        <i class="fas fa-database me-2"></i>Django
+                    </span>
+                    <span class="skill-tag">
+                        <i class="fab fa-docker me-2"></i>Docker
+                    </span>
+                    <span class="skill-tag">
+                        <i class="fas fa-network-wired me-2"></i>Kubernetes
+                    </span>
+                    <span class="skill-tag">
+                        <i class="fab fa-bootstrap me-2"></i>Bootstrap
+                    </span>
+                    <span class="skill-tag">
+                        <i class="fas fa-shield-alt me-2"></i>Sécurité réseau
+                    </span>
+                    <span class="skill-tag">
+                        <i class="fas fa-cloud me-2"></i>Cloud Computing
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Parcours académique -->
+            <div class="about-section">
+                <h3 class="section-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    Mon parcours
+                </h3>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <span class="timeline-date">2023 - Présent</span>
+                        <h4 class="timeline-title">Administration Réseau</h4>
+                        <p class="timeline-subtitle">Université Don Bosco, Lubumbashi</p>
+                        <p class="timeline-description">
+                            Formation spécialisée en administration des systèmes et réseaux, 
+                            avec des cours avancés en sécurité, virtualisation et automatisation.
+                        </p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <span class="timeline-date">2021 - 2023</span>
+                        <h4 class="timeline-title">BTS Informatique</h4>
+                        <p class="timeline-subtitle">Institut Technique, Lubumbashi</p>
+                        <p class="timeline-description">
+                            Formation générale en développement et réseaux, 
+                            avec mention Bien.
+                        </p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <span class="timeline-date">2020 - 2021</span>
+                        <h4 class="timeline-title">Bac Scientifique</h4>
+                        <p class="timeline-subtitle">Lubumbashi</p>
+                        <p class="timeline-description">
+                            Baccalauréat série Scientifique, option Mathématiques-Physique.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Centres d'intérêt -->
+            <div class="about-section">
+                <h3 class="section-title">
+                    <i class="fas fa-heart"></i>
+                    Centres d'intérêt
+                </h3>
+                
+                <div class="interests">
+                    <div class="interest-item">
+                        <i class="fas fa-code"></i>
+                        <span>Programmation</span>
+                    </div>
+                    <div class="interest-item">
+                        <i class="fas fa-robot"></i>
+                        <span>Automatisation</span>
+                    </div>
+                    <div class="interest-item">
+                        <i class="fas fa-book"></i>
+                        <span>Lecture tech</span>
+                    </div>
+                    <div class="interest-item">
+                        <i class="fas fa-music"></i>
+                        <span>Musique</span>
+                    </div>
+                    <div class="interest-item">
+                        <i class="fas fa-chess"></i>
+                        <span>Jeux d'échecs</span>
+                    </div>
+                    <div class="interest-item">
+                        <i class="fas fa-globe"></i>
+                        <span>Veille tech</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Call to Action Contact -->
+            <div class="contact-cta">
+                <h3>Envie de collaborer ?</h3>
+                <p>Je suis toujours ouvert aux nouvelles opportunités et projets intéressants.</p>
+                <a href="{% url 'contact' %}" class="btn-contact">
+                    <i class="fas fa-paper-plane"></i>
+                    Me contacter
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animation au scroll pour les éléments
+    document.addEventListener('DOMContentLoaded', function() {
+        const elements = document.querySelectorAll('.profile-card, .about-section, .interest-item');
+        
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        elements.forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            fadeObserver.observe(element);
+        });
+    });
+</script>
+{% endblock %}

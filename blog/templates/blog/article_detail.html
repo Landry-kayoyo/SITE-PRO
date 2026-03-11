@@ -1,0 +1,438 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ article.titre }} - Blog{% endblock %}
+
+{% block extra_css %}
+<style>
+    .article-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 60px 0;
+        margin-top: -24px;
+        margin-bottom: 40px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .article-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-repeat: no-repeat;
+        background-position: bottom;
+        background-size: cover;
+        opacity: 0.2;
+    }
+    
+    .article-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .article-meta-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+        font-size: 1.1rem;
+    }
+    
+    .article-meta-header span {
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .article-meta-header i {
+        margin-right: 8px;
+        font-size: 1.2rem;
+    }
+    
+    .article-content {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #333;
+        margin-bottom: 40px;
+    }
+    
+    .article-content p {
+        margin-bottom: 1.5rem;
+    }
+    
+    .featured-image {
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+        transition: transform 0.3s ease;
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .featured-image:hover {
+        transform: scale(1.02);
+    }
+    
+    .gallery-section {
+        background: #f8f9fa;
+        padding: 40px 0;
+        margin: 40px 0;
+        border-radius: 20px;
+    }
+    
+    .gallery-title {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .gallery-title h4 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #333;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 10px;
+    }
+    
+    .gallery-title h4::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .carousel-custom {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .carousel-custom img {
+        height: 500px;
+        object-fit: cover;
+        width: 100%;
+    }
+    
+    .carousel-caption-custom {
+        background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+        border-radius: 0 0 20px 20px;
+        padding: 30px 20px 20px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: white;
+    }
+    
+    .carousel-caption-custom p {
+        margin: 0;
+        font-size: 1.1rem;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    }
+    
+    .image-counter {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(0,0,0,0.6);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        z-index: 10;
+    }
+    
+    .image-counter i {
+        margin-right: 5px;
+    }
+    
+    .share-section {
+        margin: 40px 0;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .share-title {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .share-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .share-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        border-radius: 25px;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .share-btn:hover {
+        transform: translateY(-3px);
+        color: white;
+    }
+    
+    .share-btn i {
+        margin-right: 8px;
+        font-size: 1.1rem;
+    }
+    
+    .share-btn.facebook {
+        background: #1877f2;
+    }
+    
+    .share-btn.twitter {
+        background: #1da1f2;
+    }
+    
+    .share-btn.linkedin {
+        background: #0077b5;
+    }
+    
+    .share-btn.whatsapp {
+        background: #25d366;
+    }
+    
+    .share-btn.copy {
+        background: #6c757d;
+    }
+    
+    .back-to-blog {
+        display: inline-flex;
+        align-items: center;
+        padding: 12px 25px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+    }
+    
+    .back-to-blog:hover {
+        transform: translateX(-5px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+    
+    .back-to-blog i {
+        margin-right: 10px;
+    }
+    
+    @media (max-width: 768px) {
+        .article-header h1 {
+            font-size: 1.8rem;
+        }
+        
+        .article-meta-header {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .carousel-custom img {
+            height: 300px;
+        }
+        
+        .share-buttons {
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- En-tête de l'article -->
+<div class="article-header">
+    <div class="container text-center">
+        <h1>{{ article.titre }}</h1>
+        <div class="article-meta-header">
+            <span>
+                <i class="far fa-calendar-alt"></i>
+                {{ article.date_publication|date:"d F Y" }}
+            </span>
+            <span>
+                <i class="far fa-user"></i>
+                {{ article.auteur }}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Bouton retour -->
+    <a href="{% url 'article_list' %}" class="back-to-blog">
+        <i class="fas fa-arrow-left"></i>
+        Retour au blog
+    </a>
+    
+    <!-- Image principale -->
+    {% if article.image %}
+        <div class="text-center">
+            <img src="{{ article.image.url }}" 
+                 class="img-fluid featured-image" 
+                 alt="{{ article.titre }}"
+                 loading="lazy">
+        </div>
+    {% endif %}
+    
+    <!-- Contenu de l'article -->
+    <div class="article-content">
+        {{ article.contenu|linebreaks }}
+    </div>
+    
+    <!-- Galerie de photos -->
+    {% if article.images.all %}
+        <div class="gallery-section">
+            <div class="container">
+                <div class="gallery-title">
+                    <h4>
+                        <i class="fas fa-images me-2" style="color: #667eea;"></i>
+                        Galerie de photos ({{ article.images.count }})
+                    </h4>
+                </div>
+                
+                <div id="carouselArticle{{ article.id }}" class="carousel slide carousel-custom" data-bs-ride="carousel">
+                    <!-- Indicateurs -->
+                    <div class="carousel-indicators">
+                        {% for img in article.images.all %}
+                            <button type="button" 
+                                    data-bs-target="#carouselArticle{{ article.id }}" 
+                                    data-bs-slide-to="{{ forloop.counter0 }}" 
+                                    class="{% if forloop.first %}active{% endif %}"
+                                    aria-current="{% if forloop.first %}true{% endif %}"
+                                    aria-label="Slide {{ forloop.counter }}"></button>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Images -->
+                    <div class="carousel-inner">
+                        {% for img in article.images.all %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ img.image.url }}" 
+                                     class="d-block w-100" 
+                                     alt="{% if img.description %}{{ img.description }}{% else %}Photo de l'article {{ article.titre }}{% endif %}"
+                                     loading="lazy">
+                                
+                                <!-- Compteur d'image -->
+                                <div class="image-counter">
+                                    <i class="fas fa-camera"></i>
+                                    {{ forloop.counter }} / {{ article.images.count }}
+                                </div>
+                                
+                                <!-- Description -->
+                                {% if img.description %}
+                                    <div class="carousel-caption-custom">
+                                        <p>{{ img.description }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Contrôles -->
+                    <button class="carousel-control-prev" 
+                            type="button" 
+                            data-bs-target="#carouselArticle{{ article.id }}" 
+                            data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Précédent</span>
+                    </button>
+                    <button class="carousel-control-next" 
+                            type="button" 
+                            data-bs-target="#carouselArticle{{ article.id }}" 
+                            data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Suivant</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    <!-- Section Partage -->
+    <div class="share-section">
+        <div class="share-title">
+            <i class="fas fa-share-alt me-2" style="color: #667eea;"></i>
+            Partager cet article
+        </div>
+        <div class="share-buttons">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
+               target="_blank"
+               class="share-btn facebook">
+                <i class="fab fa-facebook-f"></i>
+                Facebook
+            </a>
+            <a href="https://twitter.com/intent/tweet?text={{ article.titre }}&url={{ request.build_absolute_uri }}"
+               target="_blank"
+               class="share-btn twitter">
+                <i class="fab fa-twitter"></i>
+                Twitter
+            </a>
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ article.titre }}"
+               target="_blank"
+               class="share-btn linkedin">
+                <i class="fab fa-linkedin-in"></i>
+                LinkedIn
+            </a>
+            <a href="https://api.whatsapp.com/send?text={{ article.titre }}%20{{ request.build_absolute_uri }}"
+               target="_blank"
+               class="share-btn whatsapp">
+                <i class="fab fa-whatsapp"></i>
+                WhatsApp
+            </a>
+            <button class="share-btn copy" onclick="copyToClipboard()">
+                <i class="fas fa-link"></i>
+                Copier le lien
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Fonction pour copier le lien
+    function copyToClipboard() {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            alert('Lien copié dans le presse-papiers !');
+        }, function() {
+            alert('Erreur lors de la copie du lien');
+        });
+    }
+    
+    // Animation simple
+    document.addEventListener('DOMContentLoaded', function() {
+        const images = document.querySelectorAll('.featured-image, .carousel-custom');
+        
+        images.forEach(image => {
+            image.style.opacity = '1';
+            image.style.transform = 'translateY(0)';
+        });
+    });
+</script>
+{% endblock %}

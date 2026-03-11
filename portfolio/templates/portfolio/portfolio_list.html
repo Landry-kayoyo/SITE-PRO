@@ -1,0 +1,479 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Portfolio - Mes Projets{% endblock %}
+
+{% block extra_css %}
+<style>
+    .portfolio-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 80px 0;
+        margin-top: -24px;
+        margin-bottom: 50px;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .portfolio-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-repeat: no-repeat;
+        background-position: bottom;
+        background-size: cover;
+        opacity: 0.2;
+    }
+    
+    .portfolio-header h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .portfolio-header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .category-section {
+        margin-bottom: 60px;
+        scroll-margin-top: 100px;
+    }
+    
+    .category-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 30px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #667eea;
+        display: inline-block;
+    }
+    
+    .project-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        background: white;
+        position: relative;
+    }
+    
+    .project-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+    }
+    
+    .project-image-wrapper {
+        position: relative;
+        overflow: hidden;
+        height: 200px;
+    }
+    
+    .project-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .project-card:hover .project-image {
+        transform: scale(1.1);
+    }
+    
+    .project-image-placeholder {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+    }
+    
+    .project-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(102, 126, 234, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .project-card:hover .project-overlay {
+        opacity: 1;
+    }
+    
+    .overlay-content {
+        text-align: center;
+        color: white;
+        padding: 20px;
+    }
+    
+    .overlay-content i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    
+    .overlay-content p {
+        margin: 0;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .project-content {
+        padding: 20px;
+    }
+    
+    .project-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+    }
+    
+    .project-title a {
+        color: #333;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .project-title a:hover {
+        color: #667eea;
+    }
+    
+    .project-resume {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 15px;
+    }
+    
+    .project-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+    
+    .project-date {
+        color: #999;
+        font-size: 0.85rem;
+    }
+    
+    .project-date i {
+        margin-right: 5px;
+        color: #667eea;
+    }
+    
+    .project-links {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .project-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: #f8f9fa;
+        color: #667eea;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .project-link:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: translateY(-3px);
+    }
+    
+    .btn-primary-custom {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+    
+    .btn-primary-custom:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+    
+    .btn-primary-custom i {
+        margin-left: 8px;
+        transition: transform 0.3s ease;
+    }
+    
+    .btn-primary-custom:hover i {
+        transform: translateX(3px);
+    }
+    
+    .empty-category {
+        text-align: center;
+        padding: 40px;
+        background: #f8f9fa;
+        border-radius: 20px;
+        color: #666;
+        margin: 20px 0;
+    }
+    
+    .empty-category i {
+        font-size: 3rem;
+        color: #667eea;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+    
+    .category-nav {
+        background: white;
+        padding: 20px 0;
+        margin-bottom: 40px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        position: sticky;
+        top: 76px;
+        z-index: 100;
+    }
+    
+    .category-nav-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+    
+    .category-nav-item {
+        padding: 8px 20px;
+        border-radius: 25px;
+        background: #f8f9fa;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .category-nav-item:hover,
+    .category-nav-item.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    @media (max-width: 768px) {
+        .portfolio-header h1 {
+            font-size: 2rem;
+        }
+        
+        .portfolio-header p {
+            font-size: 1rem;
+            padding: 0 20px;
+        }
+        
+        .category-title {
+            font-size: 1.5rem;
+        }
+        
+        .project-image-wrapper {
+            height: 180px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- En-tête du portfolio -->
+<div class="portfolio-header">
+    <div class="container">
+        <h1>
+            <i class="fas fa-briefcase me-3"></i>Mes Projets
+        </h1>
+        <p>Découvrez l'ensemble de mes réalisations, des projets d'études aux créations personnelles</p>
+    </div>
+</div>
+
+<!-- Navigation rapide par catégorie -->
+{% if categories %}
+<div class="category-nav">
+    <div class="container">
+        <div class="category-nav-container">
+            {% for categorie in categories %}
+                <a href="#categorie-{{ categorie.id }}" class="category-nav-item">
+                    <i class="fas fa-folder me-1"></i>
+                    {{ categorie.nom }}
+                    <span class="badge bg-white text-primary ms-1">{{ categorie.projets.count }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="container">
+    {% if categories %}
+        {% for categorie in categories %}
+            <section id="categorie-{{ categorie.id }}" class="category-section">
+                <h2 class="category-title">
+                    <i class="fas fa-folder-open me-2" style="color: #667eea;"></i>
+                    {{ categorie.nom }}
+                </h2>
+                
+                {% if categorie.projets.all %}
+                    <div class="row">
+                        {% for projet in categorie.projets.all %}
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="project-card">
+                                    <!-- Image du projet -->
+                                    <div class="project-image-wrapper">
+                                        {% if projet.image %}
+                                            <img src="{{ projet.image.url }}" 
+                                                 class="project-image" 
+                                                 alt="{{ projet.titre }}"
+                                                 loading="lazy">
+                                        {% else %}
+                                            <div class="project-image-placeholder">
+                                                <i class="fas fa-code"></i>
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <!-- Overlay au survol -->
+                                        <div class="project-overlay">
+                                            <div class="overlay-content">
+                                                <i class="fas fa-eye"></i>
+                                                <p>Voir le projet</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Contenu -->
+                                    <div class="project-content">
+                                        <h3 class="project-title">
+                                            <a href="{% url 'portfolio_detail' projet.id %}">
+                                                {{ projet.titre }}
+                                            </a>
+                                        </h3>
+                                        
+                                        <p class="project-resume">
+                                            {{ projet.resume|truncatechars:100 }}
+                                        </p>
+                                        
+                                        <div class="project-meta">
+                                            <span class="project-date">
+                                                <i class="far fa-calendar-alt"></i>
+                                                {{ projet.date_creation|date:"d/m/Y" }}
+                                            </span>
+                                            
+                                            <div class="project-links">
+                                                {% if projet.lien %}
+                                                    <a href="{{ projet.lien }}" 
+                                                       target="_blank" 
+                                                       class="project-link"
+                                                       title="Voir le projet en ligne">
+                                                        <i class="fas fa-external-link-alt"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Bouton Lire plus -->
+                                        <div class="text-center mt-3">
+                                            <a href="{% url 'portfolio_detail' projet.id %}" 
+                                               class="btn-primary-custom">
+                                                En savoir plus
+                                                <i class="fas fa-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-category">
+                        <i class="fas fa-folder-open"></i>
+                        <p>Aucun projet dans cette catégorie pour le moment.</p>
+                    </div>
+                {% endif %}
+            </section>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-briefcase"></i>
+            <h3>Aucune catégorie</h3>
+            <p>Il n'y a pas encore de catégories de projets. Revenez bientôt !</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animation au scroll pour les cartes
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.project-card');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        cards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+        
+        // Smooth scroll pour les ancres
+        document.querySelectorAll('.category-nav-item').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
