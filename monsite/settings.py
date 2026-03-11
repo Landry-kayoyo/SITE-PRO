@@ -6,7 +6,7 @@ SECRET_KEY = "django-insecure-..."
 
 DEBUG = False   # ⚠️ en production, toujours False
 
-ALLOWED_HOSTS = ["landrykayoyo.pythonanywhere.com"]  # ✅ ton domaine PythonAnywhere
+ALLOWED_HOSTS = ["landrykay.pythonanywhere.com"]  # ✅ ton domaine PythonAnywhere
 
 INSTALLED_APPS = [
     "django.contrib.admin",
